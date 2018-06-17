@@ -25,10 +25,13 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/slotix/dataflowkit/healthcheck"
-	"github.com/slotix/dataflowkit/parse"
+	// external
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	// internal
+	"github.com/sniperkit/dataflowkit/pkg/healthcheck"
+	"github.com/sniperkit/dataflowkit/pkg/parse"
 )
 
 var (

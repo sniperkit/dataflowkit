@@ -1,0 +1,41 @@
+package: github.com/sniperkit/dataflowkit
+import:
+- package: github.com/PuerkitoBio/goquery
+- package: github.com/alecthomas/template
+- package: github.com/aws/aws-sdk-go
+  subpackages:
+  - aws
+  - aws/credentials
+  - aws/request
+  - aws/session
+  - service/s3
+  - service/s3/s3iface
+  - service/s3/s3manager
+  - service/s3/s3manager/s3manageriface
+- package: github.com/clbanning/mxj
+- package: github.com/garyburd/redigo
+  subpackages:
+  - redis
+- package: github.com/go-kit/kit
+  subpackages:
+  - endpoint
+  - transport/http
+- package: github.com/gorilla/mux
+- package: github.com/juju/persistent-cookiejar
+- package: github.com/peterbourgon/diskv
+- package: github.com/pquerna/cachecontrol
+  subpackages:
+  - cacheobject
+- package: github.com/segmentio/ksuid
+- package: github.com/sirupsen/logrus
+- package: github.com/spf13/cobra
+- package: github.com/spf13/viper
+- package: github.com/stretchr/testify
+  subpackages:
+  - mock
+- package: github.com/temoto/robotstxt
+- package: golang.org/x/net
+  subpackages:
+  - html
+  - publicsuffix
+- package: gopkg.in/redsync.v1

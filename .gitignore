@@ -30,6 +30,9 @@ _testmain.go
 *.test
 *.prof
 
+profile.out
+coverage.txt
+
 # external packages folder
 vendor/
 webserver/

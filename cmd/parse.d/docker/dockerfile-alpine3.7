@@ -1,0 +1,14 @@
+FROM alpine:3.7
+
+# container deps
+RUN mkdir -p /dfk
+
+# container binary
+ADD parse.d /dfk/parse.d
+
+# container configuration
+WORKDIR /dfk
+EXPOSE 8001
+ENTRYPOINT /dfk/parse.d
+
+# CMD [""]

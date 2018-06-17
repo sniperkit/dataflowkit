@@ -29,12 +29,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/slotix/dataflowkit/errs"
-	"github.com/slotix/dataflowkit/fetch"
-	"github.com/slotix/dataflowkit/healthcheck"
-	"github.com/slotix/dataflowkit/splash"
+	// external
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	// internal
+	"github.com/sniperkit/dataflowkit/pkg/errs"
+	"github.com/sniperkit/dataflowkit/pkg/fetch"
+	"github.com/sniperkit/dataflowkit/pkg/healthcheck"
+	"github.com/sniperkit/dataflowkit/pkg/splash"
 )
 
 var (
@@ -89,10 +92,10 @@ var RootCmd = &cobra.Command{
 				switch strings.ToLower(fetcher) {
 				case "splash":
 					req = splash.Request{
-						URL:     URL,
-					//	FormData:  Params,
-					//	Cookies: Cookies,
-					//	LUA:     LUA,
+						URL: URL,
+						//	FormData:  Params,
+						//	Cookies: Cookies,
+						//	LUA:     LUA,
 					}
 				case "base":
 					req = fetch.BaseFetcherRequest{URL: URL}
@@ -107,7 +110,7 @@ var RootCmd = &cobra.Command{
 					fmt.Fprintf(os.Stderr, "error: %v\n", err)
 					os.Exit(1)
 				}
-				html,err  := resp.GetHTML()
+				html, err := resp.GetHTML()
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "error: %v\n", err)
 					os.Exit(1)
@@ -165,7 +168,7 @@ func init() {
 	} else {
 		viper.BindPFlag("DFK_FETCH", RootCmd.Flags().Lookup("DFK_FETCH"))
 	}
-	
+
 	viper.BindPFlag("FETCHER_TYPE", RootCmd.Flags().Lookup("FETCHER_TYPE"))
 	viper.BindPFlag("URL", RootCmd.Flags().Lookup("URL"))
 	viper.BindPFlag("PARAMS", RootCmd.Flags().Lookup("PARAMS"))

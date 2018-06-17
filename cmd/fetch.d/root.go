@@ -25,11 +25,13 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/slotix/dataflowkit/fetch"
-	"github.com/slotix/dataflowkit/healthcheck"
-
+	// external
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	// internal
+	"github.com/sniperkit/dataflowkit/pkg/fetch"
+	"github.com/sniperkit/dataflowkit/pkg/healthcheck"
 )
 
 var (
@@ -193,7 +195,7 @@ func init() {
 
 	//viper.SetConfigType("yaml")
 	//viper.SetConfigName("conf")
-	//viper.AddConfigPath("$HOME/go/src/github.com/slotix/dataflowkit/fetch/fetch.d/")
+	//viper.AddConfigPath("$HOME/go/src/github.com/sniperkit/dataflowkit/pkg/fetch/fetch.d/")
 	//err := viper.ReadInConfig() // Find and read the config file
 	//if err != nil {             // Handle errors reading the config file
 	//	panic(fmt.Errorf("Fatal error config file: %s \n", err))
