@@ -4,7 +4,6 @@ import (
 	"fmt"
 )
 
-// VERSION represents the current version of the service
 var (
 	VERSION      string
 	commitHash   = ""
@@ -14,6 +13,7 @@ var (
 	buildTime    = "2015-06-16-0431 UTC"
 	buildCount   = ""
 	buildUnix    = ""
+	branchName   = ""
 )
 
 func main() {

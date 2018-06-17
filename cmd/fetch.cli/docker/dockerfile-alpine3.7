@@ -7,7 +7,7 @@ RUN apk update \
 	&& mkdir -p /dfk
 
 # container binary
-ADD fetch.cli /dfk/fetch.cli
+ADD ./dtk-fetch.cli-linux /dfk/fetch.cli
 
 # container configuration
 WORKDIR /dfk

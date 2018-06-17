@@ -1,80 +1,86 @@
 .PHONY: all test clean man glide fast release install help 
-################################################################################################
-## meta
 
-# runtime
+################################################################################################
+## local - runtime
+
 ifeq (Darwin, $(findstring Darwin, $(shell uname -a)))
-  RUNTIME_OS_SLUG := osx
+  RUNTIME_OS_SLUG			:= osx
 else
-  RUNTIME_OS_SLUG := nix
+  RUNTIME_OS_SLUG 			:= nix
 endif
-RUNTIME_OS_VERSION ?= $(shell uname -r)
-RUNTIME_OS_ARCH ?= $(shell uname -m)
-RUNTIME_OS_INFO ?= $(shell uname -a)
-RUNTIME_OS_NAME ?= $(shell uname -s)
+RUNTIME_OS_VERSION 			?= $(shell uname -r)
+RUNTIME_OS_ARCH 			?= $(shell uname -m)
+RUNTIME_OS_INFO 			?= $(shell uname -a)
+RUNTIME_OS_NAME 			?= $(shell uname -s)
+
+################################################################################################
+## local - build
 
 ## program
-PROG_NAME := "parse"
-PROG_NAME_SUFFIX := "tf-"
-PROG_SRCS := $(shell git ls-files '*.go' | grep -v '^vendor/')
+PROG_NAME 					:= parse.d
+PROG_NAME_SUFFIX 			:= dtk-
+PROG_SRCS 					:= $(shell git ls-files '*.go' | grep -v '^vendor/')
 
 ## local build
-BIN_PREFIX_DIR := "./bin"
-BIN_BASE_NAME := "$(PROG_NAME_SUFFIX)$(PROG_NAME)"
-BIN_FILE_PATH := "$(BIN_PREFIX_DIR)/$(BIN_BASE_NAME)"
+BIN_PREFIX_DIR 				:= ./bin
+BIN_BASE_NAME 				:= $(PROG_NAME_SUFFIX)$(PROG_NAME)
+BIN_FILE_PATH 				:= $(BIN_PREFIX_DIR)/$(BIN_BASE_NAME)
 
 ## local dist
-DIST_PREFIX_DIR := "./dist"
-DIST_BASE_NAME := "$(PROG_NAME_SUFFIX)$(PROG_NAME)"
-DIST_FILE_PATH := "$(DIST_PREFIX_DIR)/$(DIST_BASE_NAME)"
-DIST_ARCHS := "linux darwin"
-DIST_OSS := "amd64"
+DIST_PREFIX_DIR 			:= ./dist
+DIST_BASE_NAME 				:= $(PROG_NAME_SUFFIX)$(PROG_NAME)
+DIST_FILE_PATH 				:= $(DIST_PREFIX_DIR)/$(DIST_BASE_NAME)
+DIST_ARCHS 					:= "linux darwin"
+DIST_OSS 					:= "amd64"
 
 ################################################################################################
 ## docker
 
 #### build
-DOCKER_PREFIX_DIR := "./docker"
-DOCKER_BIN_FILE_PATH := "$(DOCKER_PREFIX_DIR)/$(BIN_BASE_NAME)"
+DOCKER_PREFIX_DIR 			:= ./docker
+DOCKER_BIN_FILE_PATH 		:= $(DOCKER_PREFIX_DIR)/$(BIN_BASE_NAME)
 
 #### image
-DOCKER_IMAGE_OWNER := "sniperkit"
-DOCKER_IMAGE_BASENAME := "dfk-parse"
-DOCKER_IMAGE_TAG := "3.7-alpine"
-DOCKER_IMAGE := "$(DOCKER_IMAGE_OWNER)/$(DOCKER_IMAGE_BASENAME):$(DOCKER_IMAGE_TAG)"
+DOCKER_IMAGE_OWNER 			:= sniperkit
+DOCKER_IMAGE_BASENAME 		:= dfk-parse-d
+DOCKER_IMAGE_TAG 			:= 3.7-alpine
+DOCKER_IMAGE 				:= $(DOCKER_IMAGE_OWNER)/$(DOCKER_IMAGE_BASENAME):$(DOCKER_IMAGE_TAG)
+DOCKER_MULTI_STAGE_IMAGE 	:= $(DOCKER_IMAGE_OWNER)/$(DOCKER_IMAGE_BASENAME)-multi:$(DOCKER_IMAGE_TAG)
 
 ################################################################################################
 ## version
 
 # vcs
-REPO_VCS 		:= "github.com"
-REPO_OWNER 		:= "sniperkit"
-REPO_NAME 		:= "dataflowkit"
-REPO_URI 		:= "$(REPO_VCS)/$(REPO_OWNER)/$(REPO_NAME)"
+REPO_VCS 		:= github.com
+REPO_OWNER 		:= sniperkit
+REPO_NAME 		:= dataflowkit
+REPO_URI 		:= $(REPO_VCS)/$(REPO_OWNER)/$(REPO_NAME)
 REPO_BRANCH 	:= $(subst heads/,,$(shell git rev-parse --abbrev-ref HEAD 2>/dev/null))
 
 #### vcs - commit 
-COMMIT_ID   ?= $(shell git describe --tags --always --dirty=-dev)
-COMMIT_UNIX ?= $(shell git show -s --format=%ct HEAD)
-COMMIT_HASH ?= $(shell git rev-parse HEAD)
+COMMIT_ID   	?= $(shell git describe --tags --always --dirty=-dev)
+COMMIT_UNIX 	?= $(shell git show -s --format=%ct HEAD)
+COMMIT_HASH 	?= $(shell git rev-parse HEAD)
 
 #### semantic version 
-BUILD_COUNT ?= $(shell git rev-list --count HEAD)
-BUILD_UNIX  ?= $(shell date +%s)
-BUILD_VERSION := $(shell cat $(CURDIR)/VERSION)
-BUILD_TIME := $(shell date)
+BUILD_COUNT 	?= $(shell git rev-list --count HEAD)
+BUILD_UNIX  	?= $(shell date +%s)
+BUILD_VERSION 	:= $(shell cat $(CURDIR)/VERSION)
+BUILD_TIME 		:= $(shell date)
 
 ################################################################################################
 ## golang
 
 GO15VENDOREXPERIMENT=1
 BUILD_LDFLAGS = \
-	-X '$(PROG_REPO_URI)/cmd/$(PROG_NAME).CommitHash=$(COMMIT_HASH)' \
-	-X '$(PROG_REPO_URI)/cmd/$(PROG_NAME).CommitID=$(COMMIT_ID)' \
-	-X '$(PROG_REPO_URI)/cmd/$(PROG_NAME).CommitUnix=$(COMMIT_UNIX)' \
-	-X '$(PROG_REPO_URI)/cmd/$(PROG_NAME).BuildVersion=$(BUILD_VERSION)' \
-	-X '$(PROG_REPO_URI)/cmd/$(PROG_NAME).BuildCount=$(BUILD_COUNT)' \
-	-X '$(PROG_REPO_URI)/cmd/$(PROG_NAME).BuildUnix=$(BUILD_UNIX)'
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).VERSION=$(BUILD_VERSION)' \
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).branchName=$(REPO_BRANCH)' \
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).commitHash=$(COMMIT_HASH)' \
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).commitID=$(COMMIT_ID)' \
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).commitUnix=$(COMMIT_UNIX)' \
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).buildVersion=$(BUILD_VERSION)' \
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).buildCount=$(BUILD_COUNT)' \
+	-X '$(REPO_URI)/cmd/$(PROG_NAME).buildUnix=$(BUILD_UNIX)'
 
 ################################################################################################
 ## makefile
@@ -87,7 +93,7 @@ default: help
 
 all: deps test build install version dist ## Trigger targets for generating a new release: deps, test, build, install, version and dist targets
 
-info: clear info-runtime info-vcs info-footer ## Print all Makefile related variables
+info: clear info-runtime info-vcs info-docker info-footer ## Print all Makefile related variables
 
 clear: ## Clear terminal screen 
 	@clear
@@ -121,14 +127,27 @@ info-vcs:  ## Print source-control related variables
 	@echo " - BUILD_VERSION: $(BUILD_VERSION)"
 	@echo " - BUILD_TIME: $(BUILD_TIME)"
 
+info-docker:
+	@echo "$(INFO_HEADER)"
+	@echo "Docker:"
+	@echo " - DOCKER_PREFIX_DIR: $(DOCKER_PREFIX_DIR)"
+	@echo " - DOCKER_BIN_FILE_PATH: $(DOCKER_BIN_FILE_PATH)"
+	@echo " - DOCKER_IMAGE_OWNER: $(DOCKER_IMAGE_OWNER)"
+	@echo " - DOCKER_IMAGE_TAG: $(DOCKER_IMAGE_TAG)"
+	@echo " - DOCKER_IMAGE: $(DOCKER_IMAGE)"
+	@echo " - DOCKER_MULTI_STAGE_IMAGE: $(DOCKER_MULTI_STAGE_IMAGE)"
+
 docker: docker-build  # docker-tag docker-commit docker-push ## Generate, tag and push a new docker image for this program.
 
 docker-quick: docker-build docker-run ## Build and run quickly a docker container for this program
 
+#docker-multistage: ## Build docker multi-stage container
+#	@cd $(DOCKER_PREFIX_DIR) 
+#	@docker build --force-rm -t $(DOCKER_MULTI_STAGE_IMAGE) --no-cache -f $(CURDIR)/docker/dockerfile-multi-stage-alpine3.7 .
+
 docker-build: ## Build docker container
-	@go build -ldflags "$(BUILD_LDFLAGS)" -o $(BIN_DOCKER_FILE_PATH) *.go
-	@cd $(DOCKER_PREFIX_DIR) && \
-		docker build --force-rm -t $(DOCKER_IMAGE) --no-cache -f ./docker/dockerfile-alpine3.7
+	@GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "$(BUILD_LDFLAGS)" -o $(DOCKER_BIN_FILE_PATH)-linux -v *.go
+	@cd $(DOCKER_PREFIX_DIR) && docker build --force-rm -t $(DOCKER_IMAGE) --no-cache -f dockerfile-alpine3.7 .
 
 docker-run: ## Run docker container locally
 	@docker run -ti --rm $(DOCKER_IMAGE)

@@ -1,3 +1,10 @@
+#### test
+!dtk-fetch.d-linux
+!nsswitch.conf
+*darwin*
+*windows*
+*netbsd*
+
 #######################################
 ##### common
 #######################################

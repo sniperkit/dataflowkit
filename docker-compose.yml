@@ -1,50 +1,69 @@
+---
 version: '3'
 
 services:
   splash:
+    name: dtk-splash
     image: scrapinghub/splash
-    command: --max-timeout 3600 --slots 10 --maxrss 3000 --verbosity 0
+    command: "--max-timeout 3600 --slots 10 --maxrss 3000 --verbosity 0"
     restart: always
     ports:
-      - "8050:8050"
+    - 8050:8050
     volumes:
-      - ./splash/filters:/etc/splash/filters:ro
+    - "./shared/conf/splash/filters:/etc/splash/filters:ro"
 
   redis:
-    image: redis
+    name: dtk-redis
+    image: redis:4-alpine
     restart: always
     ports:
-      - "6379:6379"
-    
+    - 6379:6379
+
+  fetch-cli:
+    name: dtk-fetch-cli
+    image: sniperkit/dfk-fetch-d:3.7-alpine
+    environment:
+    - SPLASH=splash:8050
+    - DFK_FETCH=fetch:8000
+    - DISKV_BASE_DIR=./diskv
+    volumes:
+    - "diskv:/diskv"
+    ports:
+    - 8000:8000
+    depends_on:
+    - splash
+    restart: always
 
   fetch:
-    image: slotix/dfk-fetch
+    name: dtk-fetch-d
+    image: sniperkit/dfk-fetch-d:3.7-alpine
     environment:
-      - SPLASH=splash:8050
-      - DFK_FETCH=fetch:8000
-      - DISKV_BASE_DIR=./diskv
+    - SPLASH=splash:8050
+    - DFK_FETCH=fetch:8000
+    - DISKV_BASE_DIR=./diskv
     volumes:
-      - diskv:/diskv
+    - "diskv:/diskv"
     ports:
-      - "8000:8000"
-    #env_file: 
-     # - .env
+    - 8000:8000
     depends_on:
-      - splash
+    - splash
     restart: always
-  
+
   parse:
-    image: slotix/dfk-parse
+    name: dtk-parse-d
+    image: sniperkit/dfk-parse-d:3.7-alpine
     environment:
-      - DFK_FETCH=fetch:8000
-      - DFK_PARSE=parse:8001
-      - DISKV_BASE_DIR=./diskv
+    - DFK_FETCH=fetch:8000
+    - DFK_PARSE=parse:8001
+    - DISKV_BASE_DIR=./diskv
     volumes:
-      - diskv:/diskv
+    - "diskv:/diskv"
     ports:
-      - "8001:8001"
+    - 8001:8001
     depends_on:
-      - fetch
+    - fetch
     restart: always
+
 volumes:
-  diskv:
+  diskv: 
+  #  - "./shared/data/cache/diskv:/diskv"

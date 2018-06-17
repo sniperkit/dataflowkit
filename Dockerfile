@@ -10,7 +10,7 @@ FROM golang:1.10-alpine AS builder
 #########################################################
 
 ARG APK_EDGE=${APK_EDGE:-"false"}
-ARG APK_BUILD=${APK_BUILD:-"make"}
+ARG APK_BUILD=${APK_BUILD:-"make git ca-certificates openssl mercurial"}
 
 #### !!! Not used with this builder
 # ARG USER=${RUNTIME_USER:-"app"}
